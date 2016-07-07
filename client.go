@@ -155,3 +155,41 @@ func NewClient(config *Config, logger Logger) *Client {
 		logger:     logger,
 	}
 }
+
+func (c *Client) do(op Operator) (err error) {
+	req, err := op.Make(&RequestCtx{
+		host:    c.requestCtx.host,
+		version: c.requestCtx.version,
+	})
+	if err != nil {
+		return
+	}
+
+	httpReq, err := req.makeRequest()
+	if err != nil {
+		return
+	}
+
+	return c.doWithHTTPRequest(httpReq, op.Handle)
+}
+
+func (c *Client) doWithHTTPRequest(httpReq *http.Request, handler func(*http.Response) error) (err error) {
+	resp, err := c.client.Do(httpReq)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode/100 == 2 {
+		err = handler(resp)
+	} else {
+		err = parseErrResponse(resp)
+	}
+	return
+}
+
+// Do uses op Operator to make request, send it to salesforce,
+// receieve response and pass it to the Operator to handle.
+func (c *Client) Do(op Operator) error {
+	return c.do(op)
+}
