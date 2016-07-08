@@ -1,4 +1,4 @@
-package GoSalesforce
+package gosf
 
 import (
 	"encoding/json"
