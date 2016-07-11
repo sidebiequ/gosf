@@ -189,8 +189,8 @@ type (
 	}
 )
 
-// ParseList parse the result's to list form.
-func (r *QueryResult) ParseList(targets []interface{}) error {
+// Parse parses the result.
+func (r *QueryResult) Parse(targets interface{}) error {
 	byts, _ := json.Marshal(r.Records)
 	return json.Unmarshal(byts, &targets)
 }
