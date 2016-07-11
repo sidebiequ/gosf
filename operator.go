@@ -189,6 +189,12 @@ type (
 	}
 )
 
+// ParseList parse the result's to list form.
+func (r *QueryResult) ParseList(targets []interface{}) error {
+	byts, _ := json.Marshal(r.Records)
+	return json.Unmarshal(byts, &targets)
+}
+
 // IsValid returns true if whereClause's condition is valid.
 // In SOQL, condition in where clause can only be number, boolean or string.
 func (c *whereClause) IsValid() bool {
