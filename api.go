@@ -14,15 +14,16 @@ import (
 /************************************/
 
 // CreaetSobject creates sobject by given sobject name and entity.
-func (c *Client) CreaetSobject(sobjectName string, sobject interface{}) (string, error) {
+func (c *Client) CreaetSobject(sobjectName string, sobject interface{}) (id string, err error) {
 	op := &opCreate{
 		sobjectName: sobjectName,
 		sobject:     sobject,
 	}
-	if err := c.do(op); err != nil {
-		return "", err
+	if err = c.do(op); err != nil {
+		return
 	}
-	return op.result.ID, nil
+	id = op.result.ID
+	return
 }
 
 // UpdateSobject updates sobject by given sobject name, id and entity contains changes.
