@@ -24,7 +24,7 @@ func (e *sfErr) Error() string {
 }
 
 func (e *errResponse) Error() string {
-	errStr := fmt.Sprintf("error response(%d %s) with %d errors:\n", e.statusCode, e.status, len(e.errors))
+	errStr := fmt.Sprintf("error response(%s) with %d errors:\n", e.status, len(e.errors))
 	for i, err := range e.errors {
 		errStr += fmt.Sprintln(i, ":", err)
 	}

@@ -245,6 +245,18 @@ func (op *OpQuery) From(sobjectName string) *OpQuery {
 	return op
 }
 
+// Where defines what condition will be appended to the query.
+func (op *OpQuery) Where(field string, condition interface{}) *OpQuery {
+	where := whereClause{
+		field:     field,
+		condition: condition,
+	}
+	if where.IsValid() {
+		op.whereClauses = append(op.whereClauses, where)
+	}
+	return op
+}
+
 // OrderDesc defines the order column to sort results descendant.
 func (op *OpQuery) OrderDesc(field string) *OpQuery {
 	op.order = fmt.Sprintf("%s DESC", field)
@@ -322,7 +334,11 @@ func (op *OpQuery) makeWhereCluasesStatment() string {
 
 	var filters = make([]string, 0)
 	for field, cond := range data {
-		filters = append(filters, fmt.Sprintf("%s=%v", field, cond))
+		if str, ok := cond.(string); ok {
+			filters = append(filters, fmt.Sprintf("%s='%s'", field, str))
+		} else {
+			filters = append(filters, fmt.Sprintf("%s=%v", field, cond))
+		}
 	}
 	return fmt.Sprintf("WHERE %s", strings.Join(filters, ","))
 }
