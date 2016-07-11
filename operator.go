@@ -336,3 +336,10 @@ func (op *OpQuery) makeLimitStatment() string {
 	}
 	return ""
 }
+
+// NewOpQuery returns a OpQuery instance with given sobjectName.
+func NewOpQuery(sobjectName string) *OpQuery {
+	return &OpQuery{
+		sobjectName: sobjectName,
+	}
+}
