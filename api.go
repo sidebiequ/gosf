@@ -58,12 +58,12 @@ func (c *Client) GetSobject(sobjectName, sobjectID string, target interface{}) e
 
 // QuerySobject query sobject or sobjects by given op OpQuery.
 // See also OpQuery.
-func (c *Client) QuerySobject(op *OpQuery, target interface{}) error {
-	if err := c.do(op); err != nil {
-		return err
+func (c *Client) QuerySobject(op *OpQuery) (result *QueryResult, err error) {
+	if err = c.do(op); err != nil {
+		return
 	}
-	byts, _ := json.Marshal(op.target)
-	return json.Unmarshal(byts, &target)
+	result = op.result
+	return
 }
 
 /************************************/

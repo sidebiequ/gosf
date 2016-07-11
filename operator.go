@@ -173,7 +173,14 @@ type (
 		order        string
 		nullPriority string
 		limit        int
-		target       interface{}
+		result       *QueryResult
+	}
+
+	// QueryResult is the result of a query operation.
+	QueryResult struct {
+		TotalSize int           `json:"totalSize"`
+		Done      bool          `json:"done"`
+		Records   []interface{} `json:"records"`
 	}
 
 	whereClause struct {
@@ -214,7 +221,7 @@ func (op *OpQuery) Handle(resp *http.Response) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("get operator can't handle response with code %d, expect %d", resp.StatusCode, http.StatusOK)
 	}
-	return json.NewDecoder(resp.Body).Decode(&op.target)
+	return json.NewDecoder(resp.Body).Decode(&op.result)
 }
 
 // Select defines which columns of SObject will be return in result.
