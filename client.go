@@ -24,6 +24,9 @@ type Config struct {
 
 	// api
 	APIVersion int `json:"api_version"`
+
+	// proxy url
+	ProxyURL string `json:"proxy_url"`
 }
 
 /***********************************/
@@ -51,6 +54,20 @@ func (t *token) IsExpired() bool {
 type oAuth struct {
 	*Config
 	*token
+	transport http.RoundTripper
+}
+
+func newOAuth(config *Config) *oAuth {
+	var proxy *url.URL
+	if config.ProxyURL != "" {
+		proxy, _ = url.Parse(config.ProxyURL)
+	}
+	return &oAuth{
+		Config: config,
+		transport: &http.Transport{
+			Proxy: http.ProxyURL(proxy),
+		},
+	}
 }
 
 // ExchangeToken exchange token by username and password.
@@ -106,7 +123,7 @@ func (o *oAuth) RoundTrip(req *http.Request) (res *http.Response, err error) {
 		}
 	}
 	req.Header.Add("Authorization", o.TokenType+" "+o.AccessToken)
-	return http.DefaultTransport.RoundTrip(req)
+	return o.transport.RoundTrip(req)
 }
 
 /************************************/
@@ -149,7 +166,7 @@ func NewClient(config *Config, logger Logger) *Client {
 
 	return &Client{
 		client: &http.Client{
-			Transport: &oAuth{Config: config},
+			Transport: newOAuth(config),
 		},
 		requestCtx: requestCtx,
 		logger:     logger,
