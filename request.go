@@ -37,7 +37,7 @@ func (r *Request) makeRequest() (*http.Request, error) {
 	if _, err := url.Parse(r.urlStr); err != nil {
 		return nil, err
 	}
-
+	fmt.Println("r is %s", r)
 	if r.data == nil {
 		return http.NewRequest(r.method, r.urlStr, nil)
 	}
