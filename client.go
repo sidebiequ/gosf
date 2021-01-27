@@ -193,6 +193,7 @@ func (c *Client) do(op Operator) (err error) {
 func (c *Client) doWithHTTPRequest(httpReq *http.Request, handler func(*http.Response) error) (err error) {
 	httpReq.Header.Set("Content-Type", "application/json")
 	resp, err := c.client.Do(httpReq)
+	fmt.Println("resp is %s", resp)
 	if err != nil {
 		return
 	}

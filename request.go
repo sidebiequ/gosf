@@ -37,11 +37,11 @@ func (r *Request) makeRequest() (*http.Request, error) {
 	if _, err := url.Parse(r.urlStr); err != nil {
 		return nil, err
 	}
-	fmt.Println("r is %s", r)
+	fmt.Println("r is %s", r.data)
 	if r.data == nil {
 		return http.NewRequest(r.method, r.urlStr, nil)
 	}
-
+	fmt.Println("r is %s", r.data)
 	byts, err := json.Marshal(r.data)
 	if err != nil {
 		return nil, err
